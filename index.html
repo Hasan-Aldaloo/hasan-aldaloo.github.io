@@ -1,1 +1,219 @@
-<h1>my porfolio</h1>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Boids</title>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+
+    <body id="home">
+        <div id="header">
+            <h1>Hasan's Website</h1>
+        </div>
+
+        <h1>Boids</h1>
+
+        <p>
+            Boids is an algorithm developed by Craig Reynolds in 1986 which simulates flocking behaviour of birds
+            the word "boid" is short for "boid-oid object" which refers to bird like objects.
+        </p>
+        <p>
+            At the begining of each frame we loop over each boid in our scene and calculate its new velocity based
+            on three simple rules, after that we integrate the velocity with respect to time.
+        </p>
+        <p>
+            The velocity, position and index of the boid is all we need to keep track of, which can be put
+            in a struct as in:
+        </p>
+        <pre>
+typedef struct
+{
+    int index;
+    Vector2 position;
+    Vector2 velocity;
+} Boid;
+        </pre>
+
+        <h2>Separation</h2>
+        <p>
+            Steer to avoid crowding local flockmates within the separation range of our boid so they dont collide 
+            with each other. We loop over each boid in the array and check if they are within the separation range, if they 
+            are then calculate the separationForce as below and once the loop is over add it to the current velocity
+            times a tunable avoidance factor.
+        </p>
+
+        <pre>
+void BoidSeparation(Boid *boid)
+{
+    Vector2 separationForce = {0, 0};
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        if(Vector2Distance(boid->position, boids[i].position) < SEPARATION_RANGE)
+        {
+            separationForce.x += boid->position.x - boids[i].position.x;
+            separationForce.y += boid->position.y - boids[i].position.y;
+        }
+    }
+
+    boid->velocity.x += separationForce.x * avoidanceFactor;
+    boid->velocity.y += separationForce.y * avoidanceFactor;
+}
+        </pre>
+
+        <p>
+            And this is what the <code>Vector2Distance()</code> - belonging to the raymath library - function looks like
+        </p>
+
+        <pre>
+// Calculate distance between two vectors
+RMAPI float Vector2Distance(Vector2 v1, Vector2 v2)
+{
+    float result = sqrtf((v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y));
+
+    return result;
+}
+        </pre>
+
+        <h2>Alignment</h2>
+        <p>
+            Steer towards the average heading of local flockmates. we want to find the average velocity of all
+            flockmates in the visual range of our boid and add the difference with our boids velocity to our
+            boids velocity multiplied by a tunable alignment factor.
+        </p>
+
+        <pre>
+void BoidAlignment(Boid *boid)
+{
+    int neighbouringBoids = 0;
+    Vector2 percievedVelocity = {0, 0};
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        // If boid is in the visual range and make sure it isn't our current boid
+        if(Vector2Distance(boid->position, boids[i].position) < VISUAL_RANGE && i != boid->index)
+        {
+            percievedVelocity.x += boids[i].velocity.x;
+            percievedVelocity.y += boids[i].velocity.y;
+            neighbouringBoids++;
+        }
+    }
+
+    // If it is zero then there're no boids nearby
+    if(neighbouringBoids > 0)
+    {
+        percievedVelocity.x /= neighbouringBoids;
+        percievedVelocity.y /= neighbouringBoids;
+    }
+
+    boid->velocity.x += (percievedVelocity.x - boid->velocity.x) * alignmentFactor;
+    boid->velocity.y += (percievedVelocity.y - boid->velocity.y) * alignmentFactor;
+}
+        </pre>
+
+        <h2>Cohesion</h2>
+        <p>
+            steer to move towards the average position (center of mass) of local flockmates. similar to the
+            previous step, we find the average of the positions of all the boids in the visual range then add it
+            to the velocity of our boid multiplied by a tunable centring factor.
+        </p>
+
+        <pre>
+void BoidCohesion(Boid *boid)
+{
+    int neighbouringBoids = 0;
+    Vector2 percievedCentre = {0, 0};
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        // If boid is in the visual range and make sure it isn't our current boid
+        if(Vector2Distance(boid->position, boids[i].position) < VISUAL_RANGE && i != boid->index)
+        {
+            percievedCentre.x += boids[i].position.x;
+            percievedCentre.y += boids[i].position.y;
+            neighbouringBoids++;
+        }
+    }
+
+     // If it is zero then there're no boids nearby
+    if(neighbouringBoids > 0)
+    {
+        percievedCentre.x /= neighbouringBoids;
+        percievedCentre.y /= neighbouringBoids;
+    }
+
+    boid->velocity.x += (percievedCentre.x - boid->position.x) * centringFactor;
+    boid->velocity.y += (percievedCentre.y - boid->position.y) * centringFactor;
+}
+        </pre>
+
+        <h2>miscelancous</h2>
+        <p>
+            The boids should avoid going off screen, this should be easy to implement.
+            <code>turnFactor</code> is the magnitude by which the boids avoid the edges.
+        </p>
+
+        <pre>
+void BoidAvoidEdges(Boid *boid)
+{
+    if(boid->position.x < SCREEN_MARGIN)
+    {
+        boid->velocity.x += turnFactor;
+    }
+    if(boid->position.x > width - SCREEN_MARGIN)
+    {
+        boid->velocity.x -= turnFactor;
+    }
+    if(boid->position.y < SCREEN_MARGIN)
+    {
+        boid->velocity.y += turnFactor;
+    }
+    if(boid->position.y > height - SCREEN_MARGIN)
+    {
+        boid->velocity.y -= turnFactor;
+    }
+}
+        </pre>
+
+        <p>
+            And speed limiting, boids shan't be able to move at the speed of light and neither completely stationary
+        </p>
+
+        <pre>
+void BoidLimitSpeed(Boid *boid)
+{
+    float speed = sqrt(boid->velocity.x * boid->velocity.x + boid->velocity.y*boid->velocity.y);
+    if(speed > 200)
+    {
+        boid->velocity.x = (boid->velocity.x/speed)*200;
+        boid->velocity.y = (boid->velocity.y/speed)*200;
+    }
+    if(speed < 100)
+    {
+        boid->velocity.x = (boid->velocity.x/speed)*100;
+        boid->velocity.y = (boid->velocity.y/speed)*100;
+    }
+}
+        </pre>
+
+        <h2>Updateing the boids</h2>
+        <p>
+            Now we put together everything above. At the beginig of the frame we loop through every boid
+            and adhere to the rules after which we integrate the velocity into the position with respect
+            to time.
+        </p>
+
+        <pre>
+void BoidsUpdate()
+{
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        BoidSeparation(&boids[i]);
+        BoidAlignment(&boids[i]);
+        BoidCohesion(&boids[i]);
+        BoidAvoidEdges(&boids[i]);
+        BoidLimitSpeed(&boids[i]);
+
+        boids[i].position.x += boids[i].velocity.x * GetFrameTime();
+        boids[i].position.y += boids[i].velocity.y * GetFrameTime();
+    }
+}
+        </pre>
+    </body>
+</html>
