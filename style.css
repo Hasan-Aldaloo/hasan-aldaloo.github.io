@@ -14,8 +14,12 @@
 
 .project{
     border:3px solid black;
-    line-height: 0.5;
-    padding-left: 1%;
+    p{
+        margin:1%;
+    }
+    h3{
+        margin:1%
+    }
 }
 
 h2{
