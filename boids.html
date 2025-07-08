@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Boids</title>
+        <link rel="stylesheet" href="../style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <body id="home">
+        <div id="header">
+            <h1>Hasan's Website</h1>
+        </div>
+
+        <h1>Boids</h1>
+
+        <p>
+            Boids is an algorithm developed by Craig Reynolds in 1986 which simulates flocking behaviour of birds
+            the word "boid" is short for "boid-oid object" which refers to bird like objects.
+        </p>
+        <p>
+            The behaviour of the boids are emergent, meaning their properties emerge when it interacts
+            with other boids. Which is what makes this life simulation so fascinating! in just 200 lines
+            of code you can get pretty realistic looking bird flocking simulation.
+        </p>
+        <p>
+            At the begining of each frame we loop through each boid in our array of boids and calculate its new velocity based
+            on three simple rules, after that we integrate the velocity with respect to time.
+        </p>
+
+        <h2>Boid Stuct</h2>
+        <p>
+            The index, position and velocity of the boid is all we need to keep track of along 
+            with the array of the boids, which can be put in a struct as in:
+        </p>
+        <pre>
+typedef struct
+{
+    int index;
+    Vector2 position;
+    Vector2 velocity;
+} Boid;
+Boid boids[NUM_OF_BOIDS];
+        </pre>
+
+        <h2>Rule 1 - Separation</h2>
+        <p>
+            Steer to avoid crowding local flockmates within the separation range of our boid so they don't collide 
+            with each other. We loop over each boid in the array and check if they are within the separation range, if they 
+            are then calculate the separationForce as below and once the loop is over add it to the current velocity
+            times a tunable avoidance factor.
+        </p>
+
+        <pre>
+void BoidSeparation(Boid *boid)
+{
+    Vector2 separationForce = {0, 0};
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        if(Vector2Distance(boid->position, boids[i].position) < SEPARATION_RANGE)
+        {
+            separationForce.x += boid->position.x - boids[i].position.x;
+            separationForce.y += boid->position.y - boids[i].position.y;
+        }
+    }
+
+    boid->velocity.x += separationForce.x * avoidanceFactor;
+    boid->velocity.y += separationForce.y * avoidanceFactor;
+}
+        </pre>
+
+        <p>
+            And this is what the <code>Vector2Distance()</code> - belonging to the raymath library - function looks like
+        </p>
+
+        <pre>
+// Calculate distance between two vectors
+RMAPI float Vector2Distance(Vector2 v1, Vector2 v2)
+{
+    float result = sqrtf((v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y));
+
+    return result;
+}
+        </pre>
+
+        <h2>Rule 2 - Alignment</h2>
+        <p>
+            Steer towards the average heading of local flockmates. we want to find the average velocity of all
+            flockmates in the visual range of our boid and add the difference with our boids velocity to our
+            boids velocity multiplied by a tunable alignment factor.
+        </p>
+
+        <pre>
+void BoidAlignment(Boid *boid)
+{
+    int neighbouringBoids = 0;
+    Vector2 percievedVelocity = {0, 0};
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        // If boid is in the visual range and make sure it isn't our current boid
+        if(Vector2Distance(boid->position, boids[i].position) < VISUAL_RANGE && i != boid->index)
+        {
+            percievedVelocity.x += boids[i].velocity.x;
+            percievedVelocity.y += boids[i].velocity.y;
+            neighbouringBoids++;
+        }
+    }
+
+    // If it is zero then there're no boids nearby
+    if(neighbouringBoids > 0)
+    {
+        percievedVelocity.x /= neighbouringBoids;
+        percievedVelocity.y /= neighbouringBoids;
+    }
+
+    boid->velocity.x += (percievedVelocity.x - boid->velocity.x) * alignmentFactor;
+    boid->velocity.y += (percievedVelocity.y - boid->velocity.y) * alignmentFactor;
+}
+        </pre>
+
+        <h2>Rule 3 - Cohesion</h2>
+        <p>
+            Steer to move towards the average position (center of mass) of local flockmates. similar to the
+            previous step, we find the average of the positions of all the boids in the visual range then add it
+            to the velocity of our boid multiplied by a tunable centring factor.
+        </p>
+
+        <pre>
+void BoidCohesion(Boid *boid)
+{
+    int neighbouringBoids = 0;
+    Vector2 percievedCentre = {0, 0};
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        // If boid is in the visual range and make sure it isn't our current boid
+        if(Vector2Distance(boid->position, boids[i].position) < VISUAL_RANGE && i != boid->index)
+        {
+            percievedCentre.x += boids[i].position.x;
+            percievedCentre.y += boids[i].position.y;
+            neighbouringBoids++;
+        }
+    }
+
+     // If it is zero then there're no boids nearby
+    if(neighbouringBoids > 0)
+    {
+        percievedCentre.x /= neighbouringBoids;
+        percievedCentre.y /= neighbouringBoids;
+    }
+
+    boid->velocity.x += (percievedCentre.x - boid->position.x) * centringFactor;
+    boid->velocity.y += (percievedCentre.y - boid->position.y) * centringFactor;
+}
+        </pre>
+
+        <h2>Miscellaneous</h2>
+        <p>
+            For the sake of simultion we don't want the boids to leave the screen or go too fast or too slow.
+            The boids should take action to avoid the edges before it reaches the edges, thats what <code>SCREEN_MARGIN</code> is for.
+            <code>turnFactor</code> is the magnitude by which the boids avoid the edges.
+        </p>
+
+        <pre>
+void BoidAvoidEdges(Boid *boid)
+{
+    if(boid->position.x < SCREEN_MARGIN)
+    {
+        boid->velocity.x += turnFactor;
+    }
+    if(boid->position.x > width - SCREEN_MARGIN)
+    {
+        boid->velocity.x -= turnFactor;
+    }
+    if(boid->position.y < SCREEN_MARGIN)
+    {
+        boid->velocity.y += turnFactor;
+    }
+    if(boid->position.y > height - SCREEN_MARGIN)
+    {
+        boid->velocity.y -= turnFactor;
+    }
+}
+        </pre>
+
+        <p>
+            And for speed limiting, boids shouldn't be able to move at the speed of light and be neither completely stationary
+        </p>
+
+        <pre>
+void BoidLimitSpeed(Boid *boid)
+{
+    float speed = sqrt(boid->velocity.x * boid->velocity.x + boid->velocity.y*boid->velocity.y);
+    if(speed > MAX_SPEED)
+    {
+        boid->velocity.x = (boid->velocity.x/speed)*MAX_SPEED;
+        boid->velocity.y = (boid->velocity.y/speed)*MAX_SPEED;
+    }
+    if(speed < MIN_SPEED)
+    {
+        boid->velocity.x = (boid->velocity.x/speed)*MIN_SPEED;
+        boid->velocity.y = (boid->velocity.y/speed)*MIN_SPEED;
+    }
+}
+        </pre>
+
+        <h2>Updateing The Boids</h2>
+        <p>
+            Now we put together everything above. At the beginig of the frame we loop through every boid
+            and adhere to the rules after which we integrate the velocity into the position with respect
+            to time.
+        </p>
+
+        <pre>
+void BoidsUpdate()
+{
+    for(int i = 0; i < NUM_OF_BOIDS; i++)
+    {
+        BoidSeparation(&boids[i]);
+        BoidAlignment(&boids[i]);
+        BoidCohesion(&boids[i]);
+        BoidAvoidEdges(&boids[i]);
+        BoidLimitSpeed(&boids[i]);
+
+        boids[i].position.x += boids[i].velocity.x * GetFrameTime();
+        boids[i].position.y += boids[i].velocity.y * GetFrameTime();
+    }
+}
+        </pre>
+
+        <h2>Source Code</h2>
+        <p>
+            I've implemented this in raylib, although you should be able to translate/port this code to
+            any graphics-api/gameframwork you're using.
+        </p>
+
+        <h2>Conclusion</h2>
+        <p>
+            How beautiful is that! In just 200 lines of code we have a beautiful flock of birds moving about
+            the screen. Extending upon this you can add obstacle avoidance, goal seeking, fear, etc. and even
+            an environment simulation by adding food, prey and so on!
+        </p>
+        <a href="../index.html">Back to home</a>
+
+        <div id="footer">
+            <br>
+            <br>
+            <p>contacts:aldaloohasan@gmail.com</p>
+        </div>
+    </body>
+</html>
