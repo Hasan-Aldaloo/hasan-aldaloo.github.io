@@ -22,6 +22,10 @@
     }
 }
 
+.scrollable-canvas{
+    overflow-x:scroll;
+}
+
 h2{
     font-weight: normal;
 }
