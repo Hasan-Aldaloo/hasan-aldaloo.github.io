@@ -57,29 +57,31 @@
             on three simple rules, after that we integrate the velocity with respect to time.
         </p>
 
-        <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
-        <p id="output" />
-        <script>
-            var Module = {
-                print: (function() {
-                    var element = document.getElementById('output');
-                    if (element) element.value = ''; // clear browser cache
-                    return function(text) {
-                        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-                        console.log(text);
-                        if (element) {
-                          element.value += text + "\n";
-                          element.scrollTop = element.scrollHeight; // focus on bottom
-                        }
-                    };
-                })(),
-                canvas: (function() {
-                    var canvas = document.getElementById('canvas');
-                    return canvas;
-                })()
-            };
-        </script>
-        <script async type="text/javascript" src="boids.js"></script>
+        <div class="scrollable-canvas">
+            <canvas class=emscripten id=canvas style="width: 100%; height: auto;" oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+            <p id="output" />
+            <script>
+                var Module = {
+                    print: (function() {
+                        var element = document.getElementById('output');
+                        if (element) element.value = ''; // clear browser cache
+                        return function(text) {
+                            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                            console.log(text);
+                            if (element) {
+                              element.value += text + "\n";
+                              element.scrollTop = element.scrollHeight; // focus on bottom
+                            }
+                        };
+                    })(),
+                    canvas: (function() {
+                        var canvas = document.getElementById('canvas');
+                        return canvas;
+                    })()
+                };
+            </script>
+            <script async type="text/javascript" src="boids.js"></script>
+        </div>
 
         <h2>Boid Struct</h2>
         <p>
