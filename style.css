@@ -13,7 +13,7 @@
 }
 
 .project{
-    border:3px solid black;
+    border:2px solid black;
     p{
         margin:1%;
     }
@@ -24,4 +24,8 @@
 
 h2{
     font-weight: normal;
+}
+
+pre{
+    overflow-x: scroll;
 }
