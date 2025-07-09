@@ -4,13 +4,33 @@
         <title>Boids</title>
         <link rel="stylesheet" href="../style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script type='text/javascript' src="https://cdn.jsdelivr.net/gh/eligrey/FileSaver.js/dist/FileSaver.min.js"></script>
+        <script type='text/javascript'>
+        function saveFileFromMEMFSToDisk(memoryFSname, localFSname)     // This can be called by C/C++ code
+        {
+            var isSafari = false; // Not supported, navigator.userAgent access is being restricted
+            //var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            var data = FS.readFile(memoryFSname);
+            var blob;
+
+            if (isSafari) blob = new Blob([data.buffer], { type: "application/octet-stream" });
+            else blob = new Blob([data.buffer], { type: "application/octet-binary" });
+
+            // NOTE: SaveAsDialog is a browser setting. For example, in Google Chrome,
+            // in Settings/Advanced/Downloads section you have a setting:
+            // 'Ask where to save each file before downloading' - which you can set true/false.
+            // If you enable this setting it would always ask you and bring the SaveAsDialog
+            saveAs(blob, localFSname);
+        }
+        </script>
         <!-- Matomo Tag Manager -->
         <script>
-         var _mtm = window._mtm = window._mtm || [];
-         _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+        var _mtm = window._mtm = window._mtm || [];
+        _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
         (function() {
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.async=true; g.src='https://cdn.matomo.cloud/hasan-aldaloo.matomo.cloud/container_SOh0e8Gf.js'; s.parentNode.insertBefore(g,s);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.async=true; g.src='https://cdn.matomo.cloud/hasan-aldaloo.matomo.cloud/container_SOh0e8Gf.js'; s.parentNode.insertBefore(g,s);
         })();
        </script>
        <!-- End Matomo Tag Manager -->
@@ -24,8 +44,8 @@
         <h1>Boids</h1>
 
         <p>
-            Boids is an algorithm developed by Craig Reynolds in 1986 which simulates flocking behaviour of birds
-            the word "boid" is short for "boid-oid object" which refers to bird like objects.
+            Boids is an algorithm developed by Craig Reynolds in 1986 which simulates flocking behaviour of birds.
+            The word "boid" is short for "boid-oid object" which refers to bird like objects.
         </p>
         <p>
             The behaviour of the boids are emergent, meaning their properties emerge when it interacts
@@ -36,6 +56,30 @@
             At the begining of each frame we loop through each boid in our array of boids and calculate its new velocity based
             on three simple rules, after that we integrate the velocity with respect to time.
         </p>
+
+        <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+        <p id="output" />
+        <script>
+            var Module = {
+                print: (function() {
+                    var element = document.getElementById('output');
+                    if (element) element.value = ''; // clear browser cache
+                    return function(text) {
+                        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                        console.log(text);
+                        if (element) {
+                          element.value += text + "\n";
+                          element.scrollTop = element.scrollHeight; // focus on bottom
+                        }
+                    };
+                })(),
+                canvas: (function() {
+                    var canvas = document.getElementById('canvas');
+                    return canvas;
+                })()
+            };
+        </script>
+        <script async type="text/javascript" src="boids.js"></script>
 
         <h2>Boid Struct</h2>
         <p>
@@ -238,6 +282,7 @@ void BoidsUpdate()
 
         <h2><a href="https://github.com/Hasan-Aldaloo/boids">Source Code</a></h2>
         <p>
+            The code is far from perfect and there're a lot of improvements it can use in terms of optimizations or readibility.<br>
             I've implemented this in raylib, although you should be able to translate/port this code to
             any graphics-api/gameframwork you're using.
         </p>
