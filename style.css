@@ -12,6 +12,14 @@
     text-align: center;
 }
 
+.canvas {
+  width: 100%;        /* fill its parent container */
+  height: auto;       /* scale height to maintain aspect */
+  max-width: 800px;   /* optional: cap at your “design” width */
+  display: block;     /* remove inline-block whitespace issues */
+  margin: 0 auto;     /* center on large screens */
+}
+
 .project{
     border:2px solid black;
     p{
@@ -20,10 +28,6 @@
     h3{
         margin:1%;
     }
-}
-
-.scrollable-canvas{
-    overflow-x:scroll;
 }
 
 h2{
