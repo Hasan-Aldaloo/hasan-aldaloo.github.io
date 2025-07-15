@@ -1,15 +1,30 @@
-#home{
+body {
+    margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin:auto;
-    width:85%;
+    background-color: white;
 }
 
-#header{
+header {
     text-align: center;
+    padding: 2rem;
+    background-color: rgb(0, 161, 97);
+    color: white;
 }
 
-#footer{
+section {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+pre{
+    overflow-x: scroll;
+}
+
+footer{
     text-align: center;
+    padding:2rem;
+    background-color: #f1f1f1;
 }
 
 .canvas {
@@ -30,10 +45,3 @@
     }
 }
 
-h2{
-    font-weight: normal;
-}
-
-pre{
-    overflow-x: scroll;
-}
