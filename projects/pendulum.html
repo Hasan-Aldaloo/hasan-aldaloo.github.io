@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Hasan Aldaloo</title>
+        
+        <meta name="author" content="Hasan Aldaloo">
+        <meta name="publisher" content="Hasan Aldaloo">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+
+        <meta name="robots" content="index, follow">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        
+        <link rel="stylesheet" href="../style.css">
+
+        <meta property="og:title" content="Hasan Aldaloo Home Page">
+        <!-- <meta property="og:image" content=""> -->
+        <meta property="og:description" content=".">
+        <meta property="og:url" content="hasan-aldaloo.github.io">
+        <meta property="og:site_name" content="Hasan Aldaloo">
+        <meta property="og:type" content="article">
+        
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <!-- Matomo Tag Manager -->
+        <script>
+            var _mtm = window._mtm = window._mtm || [];
+        _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+        (function() {
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.async=true; g.src='https://cdn.matomo.cloud/hasan-aldaloo.matomo.cloud/container_SOh0e8Gf.js'; s.parentNode.insertBefore(g,s);
+        })();
+       </script>
+       <!-- End Matomo Tag Manager -->
+    </head>
+
+    <body>
+        <header>
+            <h1>Double Pendulum Simulation</h1>
+        </header>
+
+        <section>
+            <h2>Introduction</h2>
+                <p>
+                    A double pendulum, also known as a chaotic pendulum, is a pendulum with another pendulum attached to its end, forming a complex physical system that exhibits rich dynamic behavior with a strong sensitivity to initial conditions
+                    The double pendulum is considered a chaotic system because it's motion is unpredictable.
+                </p>
+
+                <canvas class="canvas" id="canvas" oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+                <p id="output"/>
+                <script>
+                    var Module = {
+                        print: (function() {
+                            var element = document.getElementById('output');
+                            if (element) element.value = ''; // clear browser cache
+                            return function(text) {
+                                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                                console.log(text);
+                                if (element) {
+                                  element.value += text + "\n";
+                                  element.scrollTop = element.scrollHeight; // focus on bottom
+                                }
+                            };
+                        })(),
+                        canvas: (function() {
+                            var canvas = document.getElementById('canvas');
+                            return canvas;
+                        })()
+                    };
+                </script>
+                <script async type="text/javascript" src="js/pendulum.js"></script>
+
+            <h2>Deriving Equations of Motion</h2>
+                <p>
+                    While it is possible to use Newtonian mechanics to simulate a double pendulum, it is more complicated and cumbersome 
+                    than using lagrangian mechanics. The tension forces are a constraint which have to be taken into account in np, that are not easily quantified.
+                    Lagrangian mechanics is simpler in the sense that it is "energy-oriented", making the equations of motion
+                    easier to derive.
+                </p>
+
+                <p>
+                    The lagrangian is the difference between kinetic energt and potential energy:
+                    $$ L = T - U $$
+                    Where: 
+                    <ul>
+                        <li>\(T\) is kinetic energy</li>
+                        <li>\(U\) is potential energy</li>
+                    </ul>
+                </p>
+
+                <p>
+                    The potential energy and kinetic energy of a pendulum is defined as:
+                    $$ T = {{1\over2} mgl^2\dot\theta^2} $$
+                    $$ U = {-mgl\cos(\theta)} $$
+                    For those unfamiliar with \(\dot\theta\), it is the change in theta; so basically angular velocity.
+                </p>
+
+                <p>
+                    Substituting the kinetic and potential enegries into the lagrangian:
+                    $$ L = {{{1\over2} mgl^2\dot\theta^2} + {mgl\cos(\theta)}} $$
+                </p>
+
+                <p>
+                    However, this is the lagrangian for a single pendulum. The lagrangian of a double pendulum
+                    is:
+                    $$ T = {{{1\over2}(m_1 + m_2)l_1^2\dot\theta_1^2} + {{1\over2}m_2l_2^2\dot\theta_2^2} + {m_2l_1l_2\dot\theta_1\dot\theta_2cos(\theta_1 - \theta_2)}} $$
+                    $$ U = {{(m_1+m_2)l_1gcos(\theta_1)} + {m_2l_2gcos(\theta_2)}} $$
+                    Thus:
+                    $$ L = {{1\over2}(m_1 + m_2)l_1^2\dot\theta_1^2} + {{1\over2}m_2l_2^2\dot\theta_2^2} + {m_2l_1l_2\dot\theta_1\dot\theta_2cos(\theta_1 - \theta_2)} + {(m_1+m_2)l_1gcos(\theta_1)} + {m_2l_2gcos(\theta_2)} $$
+                </p>
+
+            <h2>Implementation</h2>
+
+                <p>
+                    With all the information above we can simulate a single or a compound pendulum.
+                    We'll have a function 
+                    <code>UpdatePendulum()</code> which will numerically integrate the angle of Pendulum
+                    with respect to a small dt defined as <code>GetFrameTime()</code>, which is the amount of time between
+                    frames; dt can also be whatever you want it to be, the higher it is, the faster the simualtion;
+                    the lower it is, the slower the simulation.
+                    The function <code>Theta1Acceleration()</code> and <code>Theta2Acceleration()</code>
+                    calculates the angular acceleration of \(\theta_1\) and \(\theta_2\) respectively and returns it.
+                    While the <code>Pendulum</code> data type is defined to contain the parameters of our pendulum. 
+                </p>
+
+                <pre>
+float Theta1Acceleration(Pendulum p)
+{
+    float num1 = -g * (2 * p.mass1 + p.mass2) * sinf(p.theta1);
+    float num2 = -p.mass2 * g * sinf(p.theta1 - 2 * p.theta2);
+    float num3 = -2 * sinf(p.theta1 - p.theta2) * p.mass2;
+    float num4 = p.theta2Velocity * p.theta2Velocity * p.length2 + p.theta1Velocity * p.theta1Velocity * p.length1 * cosf(p.theta1 - p.theta2);
+    float denom = p.length1 * (2 * p.mass1 + p.mass2 - p.mass2 * cosf(2 * p.theta1 - 2 * p.theta2));     
+    return (num1 + num2 + num3 * num4) / denom;
+}
+
+float Theta2Acceleration(Pendulum p)
+{
+    float num1 = 2 * sinf(p.theta1 - p.theta2);
+    float num2 = p.theta1Velocity * p.theta1Velocity * p.length1 * (p.mass1 + p.mass2);
+    float num3 = g * (p.mass1 + p.mass2) * cosf(p.theta1);
+    float num4 = p.theta2Velocity * p.theta2Velocity * p.length2 * p.mass2 * cosf(p.theta1 - p.theta2);
+    float denom = p.length2 * (2 * p.mass1 + p.mass2 - p.mass2 * cosf(2 * p.theta1 - 2 * p.theta2));
+
+    return (num1 * (num2 + num3 + num4)) / denom;
+}
+
+void UpdatePendulum(Pendulum *p)
+{
+    const float dt = GetFrameTime();
+    p->theta1Velocity += Theta1Acceleration(*p) * dt;
+    p->theta1 += p->theta1Velocity * dt;
+
+    p->theta2Velocity += Theta2Acceleration(*p) * dt;
+    p->theta2 += p->theta2Velocity * dt;
+}
+                </pre>
+
+                <p>
+                    With the angle of our pendulum know, we can draw it onto the screen by
+                    calculating its <code>x</code> and <code>y</code> position.
+                </p>
+
+                <pre>
+void UpdatePendulum(Pendulum *p)
+{
+    ...
+
+    Vector2 endPos1 = {-(p->length1*100)*cosf(p->theta1+(90*DEG2RAD))+width/2, (p->length1*100)*sinf(p->theta1+(90*DEG2RAD))+height/2};
+    Vector2 endPos2 = {-(p->length2*100)*cosf(p->theta2+(90*DEG2RAD))+endPos1.x, (p->length2*100)*sinf(p->theta2+(90*DEG2RAD))+endPos1.y};
+    
+    DrawLineEx((Vector2){width/2, height/2}, endPos1, 2, p->colour);
+    DrawLineEx(endPos1, endPos2, 2, p->colour);
+}
+                </pre>
+
+                <p>
+                    <code>DrawlineEx()</code> function is defined as:
+                </p>
+
+                <pre>
+void DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color)
+                </pre>
+
+                <p>
+                    The <code>UpdatePendulum(Pendulum *p)</code> is called every frame for each pendulum 
+                    we want to simulate.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    The double pendulum is a compact example of how deterministic laws can lead to 
+                    unpredictable motion — a great demonstration of chaos in a mechanical system. 
+                    This page combines the Lagrangian derivation with a straightforward numerical 
+                    implementation so you can both understand and play with the behaviour.
+                </p>
+                <a href="../index.html">Back to home</a>
+        </section>
+
+        <footer>
+            <p>Contacts: aldaloohasan@gmail.com</p>
+            <p>© 2025 All Rights Reserved</p>
+        </footer>
+    </body>
+</html>
