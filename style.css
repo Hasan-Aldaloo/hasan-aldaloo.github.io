@@ -1,48 +1,48 @@
-body {
-    margin: 0;
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background-color: white;
-    color:black;
-}
-
-header {
-    text-align: center;
-    padding: 2rem;
-    background-color: rgb(41, 41, 41);
-    color:white;
-}
-
-section {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-pre{
-    overflow-x: scroll;
-}
-
-footer{
-    text-align: center;
-    padding:2rem;
-    background-color: rgb(236, 236, 236);
-    color:rgb(131, 131, 131);
-}
-
-.card{
-    border:2px solid rgb(0, 0, 0);
-    border-radius: 8px;
-    padding: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-
-    h3,p{
-        margin:0.5rem;
+    body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        background-color: white;
+        color:black;
     }
-}
 
-.canvas {
-    width: 100%;        /* fill its parent container */
-    height: auto;       /* scale height to maintain aspect */
-    display: block;     /* remove inline-block whitespace issues */
-    margin: 0 auto;     /* center on large screens */
-}
+    header {
+        text-align: center;
+        padding: 2rem;
+        background-color: rgb(41, 41, 41);
+        color:white;
+    }
+
+    section {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    pre{
+        overflow-x: scroll;
+    }
+
+    footer{
+        text-align: center;
+        padding:2rem;
+        background-color: rgb(236, 236, 236);
+        color:rgb(131, 131, 131);
+    }
+
+    .card{
+        border:2px solid rgb(0, 0, 0);
+        border-radius: 8px;
+        padding: 0.5rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+        h3,p{
+            margin:0.5rem;
+        }
+    }
+
+    .canvas {
+        width: 100%;        /* fill its parent container */
+        height: auto;       /* scale height to maintain aspect */
+        display: block;     /* remove inline-block whitespace issues */
+        margin: 0 auto;     /* center on large screens */
+    }
