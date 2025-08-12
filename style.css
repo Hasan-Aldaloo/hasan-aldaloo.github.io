@@ -1,14 +1,15 @@
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background-color: white;
+    color:black;
 }
 
 header {
     text-align: center;
     padding: 2rem;
     background-color: rgb(41, 41, 41);
-    color: white;
+    color:white;
 }
 
 section {
@@ -24,13 +25,18 @@ pre{
 footer{
     text-align: center;
     padding:2rem;
-    background-color: #f1f1f1;
+    background-color: rgb(236, 236, 236);
+    color:rgb(131, 131, 131);
 }
 
-.project{
-    border:2px solid black;
+.card{
+    border:2px solid rgb(0, 0, 0);
+    border-radius: 8px;
+    padding: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
     h3,p{
-        margin:0.5em;
+        margin:0.5rem;
     }
 }
 
