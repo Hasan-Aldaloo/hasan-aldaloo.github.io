@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Hasan Aldaloo</title>
+        
+        <meta name="author" content="Hasan Aldaloo">
+        <meta name="publisher" content="Hasan Aldaloo">
+        <meta name="description" content="Double pendulum simulation, with lagrangian mechanics, demonstrating chaos theory.">
+        <meta name="keywords" content="chaos theory, chaos, chaotic, pendulums, double pendulum, simualtion, lagrangian, physics, software, project">
+
+        <meta name="robots" content="index, follow">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        
+        <link rel="stylesheet" href="../style.css">
+
+        <meta property="og:title" content="Double Pendulum Simulation - Hasan Aldaloo">
+        <!-- <meta property="og:image" content=""> -->
+        <meta property="og:description" content="Double pendulum simulation, with lagrangian mechanics, demonstrating chaos theory.">
+        <meta property="og:url" content="hasan-aldaloo.github.io">
+        <meta property="og:site_name" content="Hasan's Website">
+        <meta property="og:type" content="article">
+        
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <!-- Matomo Tag Manager -->
+        <script>
+            var _mtm = window._mtm = window._mtm || [];
+        _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+        (function() {
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.async=true; g.src='https://cdn.matomo.cloud/hasan-aldaloo.matomo.cloud/container_SOh0e8Gf.js'; s.parentNode.insertBefore(g,s);
+        })();
+       </script>
+       <!-- End Matomo Tag Manager -->
+    </head>
+
+    <body>
+        <header>
+            <h1>Lorenz Attractor</h1>
+        </header>
+
+        <section>
+            <h2>Introduction</h2>
+
+            <p>
+                This article is still a work in progress, And the simulation is not yet accurate or perfect.
+            </p>
+
+            <canvas class="canvas" id="canvas" oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+            <p id="output"/>
+            <script>
+                    var Module = {
+                        print: (function() {
+                            var element = document.getElementById('output');
+                            if (element) element.value = ''; // clear browser cache
+                            return function(text) {
+                                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                                console.log(text);
+                                if (element) {
+                                  element.value += text + "\n";
+                                  element.scrollTop = element.scrollHeight; // focus on bottom
+                                }
+                            };
+                        })(),
+                        canvas: (function() {
+                            var canvas = document.getElementById('canvas');
+                            return canvas;
+                        })()
+                    };
+                </script>
+                <script async type="text/javascript" src="js/lorenz.js"></script>
+                <a href="../index.html">Back to home</a>
+        </section>
+
+        <footer>
+            <p>Contacts: aldaloohasan@gmail.com</p>
+            <p>© 2025 All Rights Reserved</p>
+        </footer>
+    </body>
+</html>
