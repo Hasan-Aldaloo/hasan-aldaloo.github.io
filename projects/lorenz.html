@@ -8,7 +8,7 @@
         
         <meta name="author" content="Hasan Aldaloo">
         <meta name="publisher" content="Hasan Aldaloo">
-        <meta name="description" content="Double pendulum simulation, with lagrangian mechanics, demonstrating chaos theory.">
+        <meta name="description" content="">
         <meta name="keywords" content="chaos theory, chaos, chaotic, pendulums, double pendulum, simualtion, lagrangian, physics, software, project">
 
         <meta name="robots" content="index, follow">
@@ -18,13 +18,14 @@
         
         <link rel="stylesheet" href="../style.css">
 
-        <meta property="og:title" content="Double Pendulum Simulation - Hasan Aldaloo">
+        <meta property="og:title" content="Lorenz Attractor - Hasan Aldaloo">
         <!-- <meta property="og:image" content=""> -->
-        <meta property="og:description" content="Double pendulum simulation, with lagrangian mechanics, demonstrating chaos theory.">
+        <meta property="og:description" content="">
         <meta property="og:url" content="hasan-aldaloo.github.io">
         <meta property="og:site_name" content="Hasan's Website">
         <meta property="og:type" content="article">
         
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
         <!-- Matomo Tag Manager -->
         <script>
@@ -47,7 +48,10 @@
             <h2>Introduction</h2>
 
             <p>
-                This article is still a work in progress, And the simulation is not yet accurate or perfect.
+                The Lorenz system is a set of three ordinary differential equations, first developed by 
+                the meteorologist Edward Lorenz while studying atmospheric convection. It is a classic 
+                example of a system that can exhibit chaotic behavior, meaning its output can be highly 
+                sensitive to small changes in its starting conditions.
             </p>
 
             <canvas class="canvas" id="canvas" oncontextmenu=event.preventDefault() tabindex=-1></canvas>
@@ -73,6 +77,42 @@
                     };
                 </script>
                 <script async type="text/javascript" src="js/lorenz.js"></script>
+
+                <h2>Overview</h2>
+
+                <p>
+                    The behaviour of the position of the points is governed by the following equations:
+                    $$ {dx\over dt} = {\sigma(y-x)} $$
+                    $$ {dy\over dt} = {x(\rho-z)-y} $$
+                    $$ {dz\over dt} = {xy-\beta z} $$
+                    Each point has a coordinate component which are calculated using equations above.
+                    The constants \(\sigma\), \(\rho\) and \(\beta\) (sigma, rho and beta respectively) are the same for every point.
+                    The points differ in their initial positions. From the beginning of the simulation, we see
+                    all the points following the same path, but as the simulation continues the points begin to diverge.
+                    The Lorenz Attractor is an example of a chaotic system, although it is deterministic; meaning if the simulation
+                    is run again we will get the same results. The results only change if the initial conditions are different.
+                </p>
+
+                <p>
+                    The simulation above is run with the values \(\sigma=10\), \(\rho=28\) and \(\beta={8\over 3}\).
+                    The points start at position (1, 1, 1) and each other point is a difference of 0.05 units.
+                </p>
+
+                <h2>Visualisation</h2>
+
+                <p>
+                    The position of each point is stored in a buffer each frame.
+                    Drawing the trail of each point is as simple as drawing a line between each
+                    point. The buffer has a size limit though, so after a certain period of time
+                    the simulation will stop.
+                </p>
+
+                <h2>See also</h2>
+
+                <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Lorenz_system">Lorenz System - Wikipedia</a></li>
+                </ul>
+
                 <a href="../index.html">Back to home</a>
         </section>
 
