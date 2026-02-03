@@ -25,6 +25,7 @@
         <meta property="og:site_name" content="Hasan's Website">
         <meta property="og:type" content="article">
         
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
         <!-- Matomo Tag Manager -->
         <script>
@@ -74,16 +75,16 @@
                 </script>
                 <script async type="text/javascript" src="js/pendulum.js"></script>
 
-            <h2>Deriving The Equations of Motion</h2>
+            <h2>Deriving Equations of Motion</h2>
                 <p>
                     While it is possible to use Newtonian mechanics to simulate a double pendulum, it is more complicated and cumbersome 
-                    than using lagrangian mechanics. The tension forces are a constraint which have to be taken into account in Newtonian mechanics, that are not easily quantified.
+                    than using lagrangian mechanics. The tension forces are a constraint which have to be taken into account in np, that are not easily quantified.
                     Lagrangian mechanics is simpler in the sense that it is "energy-oriented", making the equations of motion
                     easier to derive.
                 </p>
 
                 <p>
-                    The lagrangian is the difference between kinetic energy and potential energy:
+                    The lagrangian is the difference between kinetic energt and potential energy:
                     $$ L = T - U $$
                     Where: 
                     <ul>
@@ -93,7 +94,7 @@
                 </p>
 
                 <p>
-                    The kinetic energy and potential energy of a pendulum is defined as:
+                    The potential energy and kinetic energy of a pendulum is defined as:
                     $$ T = {{1\over2} mgl^2\dot\theta^2} $$
                     $$ U = {-mgl\cos(\theta)} $$
                     For those unfamiliar with \(\dot\theta\), it is the change in theta; so basically angular velocity.
@@ -105,11 +106,17 @@
                 </p>
 
                 <p>
-                    However, this is the lagrangian for a single pendulum. The lagrangian for a double pendulum
+                    However, this is the lagrangian for a single pendulum. The lagrangian of a double pendulum
                     is:
+                </p>
+                <p class="equation">
                     $$ T = {{{1\over2}(m_1 + m_2)l_1^2\dot\theta_1^2} + {{1\over2}m_2l_2^2\dot\theta_2^2} + {m_2l_1l_2\dot\theta_1\dot\theta_2cos(\theta_1 - \theta_2)}} $$
                     $$ U = {{(m_1+m_2)l_1gcos(\theta_1)} + {m_2l_2gcos(\theta_2)}} $$
+                </p>
+                <p>
                     Thus:
+                </p>
+                <p class="equation">
                     $$ L = {{1\over2}(m_1 + m_2)l_1^2\dot\theta_1^2} + {{1\over2}m_2l_2^2\dot\theta_2^2} + {m_2l_1l_2\dot\theta_1\dot\theta_2cos(\theta_1 - \theta_2)} + {(m_1+m_2)l_1gcos(\theta_1)} + {m_2l_2gcos(\theta_2)} $$
                 </p>
 
