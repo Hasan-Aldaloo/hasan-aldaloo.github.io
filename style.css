@@ -3,6 +3,10 @@
         font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         background-color: rgb(0, 0, 0);
         color:rgb(255, 255, 255);
+
+        a{
+            color: rgb(115, 249, 254);
+        }
     }
 
     header {
@@ -25,27 +29,22 @@
 
     footer{
         text-align: center;
-        margin:0;
+        padding:0.75rem;
         background-color: rgb(20, 20, 20);
         color:rgb(131, 131, 131);
     }
 
     .card{
-        /* min-height: 13vw; */
         text-align: center;
         border:2px solid rgb(255, 255, 255);
         border-radius: 8px;
         padding: 0.5rem;
         box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
         background-position: center;
-        color:rgb(212, 212, 212);
-    
+        color:rgb(255, 255, 255);
+        
         p{
             margin-bottom: 0;
-        }
-
-        a{
-            color:rgb(255, 255, 255);
         }
     }
 
@@ -54,4 +53,9 @@
         height: auto;       /* scale height to maintain aspect */
         display: block;     /* remove inline-block whitespace issues */
         margin: 0 auto;     /* center on large screens */
+    }
+
+    .equation{
+        overflow: auto;
+        scrollbar-color: #b1b1b1 #000000; /* thumb color track color */
     }
