@@ -28,7 +28,7 @@ except:
     remainingTime = 0
 
 try:
-    solarToLoadPercentage = (solarPower/loadPower*100)*100
+    solarToLoadPercentage = (solarPower/(loadPower*1000))*100
 except:
     solarToLoadPercentage = 0
 
