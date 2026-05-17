@@ -23,12 +23,12 @@ loadPercentage = float(data["dat"]["pars"]["bc_"][1]["val"])
 loadCurrent = (loadPower*1000)/230
 
 try:
-    remainingTime = (batteryVoltage * BATTERY_CAPACITY_A * batteryCapacity)/(loadPower)
+    remainingTime = (batteryVoltage * BATTERY_CAPACITY_A * (batteryCapacity/100))/(loadPower)
 except:
     remainingTime = 0
 
 try:
-    solarToLoadPercentage = int((solarPower/loadPower)/10)
+    solarToLoadPercentage = int((solarPower/loadPower)/100)
 except:
     solarToLoadPercentage = 0
 
