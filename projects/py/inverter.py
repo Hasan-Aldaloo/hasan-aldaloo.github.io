@@ -20,10 +20,10 @@ batteryCapacity = float(data["dat"]["pars"]["bt_"][1]["val"])
 
 loadPower = float(data["dat"]["pars"]["bc_"][0]["val"])
 loadPercentage = float(data["dat"]["pars"]["bc_"][1]["val"])
-loadCurrent = (loadPower*1000)/230
+loadCurrent = int((loadPower*1000)/230)
 
 try:
-    remainingTime = (batteryVoltage * BATTERY_CAPACITY_A * (batteryCapacity/100))/(loadPower)
+    remainingTime = int((batteryVoltage * BATTERY_CAPACITY_A * (batteryCapacity/100))/(loadPower))
 except:
     remainingTime = 0
 
