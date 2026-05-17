@@ -28,7 +28,7 @@ except:
     remainingTime = 0
 
 try:
-    solarToLoadPercentage = int((solarPower/loadPower)/100)
+    solarToLoadPercentage = int((solarPower/loadPower)/10)
 except:
     solarToLoadPercentage = 0
 
